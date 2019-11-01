@@ -7,11 +7,16 @@
         font-family: 'Source Code Pro', monospace;
         font-size: 26;
         font-weight: 800;
-        color: #00dd00;
-        background-color: black;
+        /* background-color: black; */
       }
       .display {
         white-space: pre;
+      }
+      .color-leaf {
+        color: #00dd00;
+      }
+      .color-snow {
+        color: #ffffff;
       }
     </style>
   </head>
@@ -20,8 +25,11 @@
     <script>
       let q = ( selector ) => document.querySelector( selector );
       var charLeafs = [ "^", "~", "." ];
-      var charSnows = [ "⋆", "+", "o" ];
-      var charSnowflake = [ "❆" ];
+      var charSnows = [ "*", "+", "o" ];
+      var charSnowflake = [ "*" ];
+      var snowflakes = [];
+      const treeHeight = 18;
+      const screenWidth = treeHeight * 2;
       function getRandomInt( num ) { return Math.floor( num * Math.random() ); }
       function generateTree( height ) {
         if( height < 0 ) {
@@ -34,9 +42,20 @@
           console.log( numLeaves, spaceLength );
           tree += " ".repeat( spaceLength );
           tree += [...new Array( numLeaves * 2 + 1 )].map( x => charLeafs[ getRandomInt( charLeafs.length ) ] ).join( "" );
+          tree += " ".repeat( spaceLength );
           tree += "\n";
         }
         return tree;
+      }
+      function addSnow( tree, ratio ) {
+        return tree.split( "" ).map( x => {
+          if( charLeafs.includes( x ) ) {
+            if( Math.random() < ratio ) {
+              return charSnows[ getRandomInt( charSnows.length ) ];
+            }
+          }
+          return x;
+        }).join( "" );
       }
       function mutateTree( tree ) {
         return tree.split( "" ).map( x => {
@@ -45,15 +64,65 @@
               return charLeafs[ getRandomInt( charLeafs.length ) ];
             }
           }
+          if( charSnows.includes( x ) ) {
+            if( Math.random() < 0.1 ) {
+              return charSnows[ getRandomInt( charSnows.length ) ];
+            }
+          }
           return x;
         }).join( "" );
       }
-      let tannenbaum = generateTree( 18 );
-      q( "#display" ).innerText = tannenbaum;
+      function displayTree( tree ) {
+        let treeDisplay = tree.split( "" ).map( (e,i) => {
+          let x = i % ( screenWidth + 2 );
+          let y = Math.floor( i / ( screenWidth + 2 ) );
+          if( e === "\n" ) {
+            return e;
+          }
+          if( snowflakes.some( s => s.x === x && s.y === y ) ) {
+            return `<span class='color-snow'>${charSnowflake[ getRandomInt( charSnowflake.length ) ]}</span>`;
+          }
+          if( charLeafs.includes( e ) ) {
+            return `<span class='color-leaf'>${e}</span>`;
+          }
+          if( charSnows.includes( e ) || charSnowflake.includes( e ) ) {
+            return `<span class='color-snow'>${e}</span>`;
+          }
+          return e;
+        }).join( "" );
+        q( "#display" ).innerHTML = treeDisplay;
+      }
+      function dropSnowflake() {
+        var x = getRandomInt( screenWidth );
+        snowflakes.push( { x, y: 0 } );
+      }
+      function updateSnowflakes() {
+        for( var i = 0; i < snowflakes.length; i++ ) {
+          snowflakes[ i ].y++;
+          if( snowflakes[ i ].y > treeHeight ) {
+            snowflakes.splice( i, 1 );
+          }
+          else {
+            if( Math.random() < 0.5 ) {
+              snowflakes[ i ].x += getRandomInt( 2 ) - 1;
+            }
+          }
+        }
+      }
+      let tannenbaum = generateTree( treeHeight );
+      tannenbaum = addSnow( tannenbaum, 0.33 );
+      tannenbaum = mutateTree( tannenbaum );
+      displayTree( tannenbaum );
       setInterval( () => {
         tannenbaum = mutateTree( tannenbaum );
-        q( "#display" ).innerText = tannenbaum;
+        displayTree( tannenbaum );
       }, 1000 );
+      dropSnowflake();
+      setInterval( () => {
+        updateSnowflakes();
+        dropSnowflake();
+        displayTree( tannenbaum );
+      }, 100 );
     </script>
   </body>
 </html>
