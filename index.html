@@ -1,0 +1,59 @@
+<html>
+  <head>
+    <title>ChristmASCII Tree</title>
+    <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro&display=swap" rel="stylesheet">
+    <style>
+      body {
+        font-family: 'Source Code Pro', monospace;
+        font-size: 26;
+        font-weight: 800;
+        color: #00dd00;
+        background-color: black;
+      }
+      .display {
+        white-space: pre;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="display" class="display"></div>
+    <script>
+      let q = ( selector ) => document.querySelector( selector );
+      var charLeafs = [ "^", "~", "." ];
+      var charSnows = [ "⋆", "+", "o" ];
+      var charSnowflake = [ "❆" ];
+      function getRandomInt( num ) { return Math.floor( num * Math.random() ); }
+      function generateTree( height ) {
+        if( height < 0 ) {
+          height = 0;
+        }
+        let tree = "";
+        for( var i = 0; i < height; i++ ) {
+          let numLeaves = i;
+          let spaceLength = height - numLeaves;
+          console.log( numLeaves, spaceLength );
+          tree += " ".repeat( spaceLength );
+          tree += [...new Array( numLeaves * 2 + 1 )].map( x => charLeafs[ getRandomInt( charLeafs.length ) ] ).join( "" );
+          tree += "\n";
+        }
+        return tree;
+      }
+      function mutateTree( tree ) {
+        return tree.split( "" ).map( x => {
+          if( charLeafs.includes( x ) ) {
+            if( Math.random() < 0.025 ) {
+              return charLeafs[ getRandomInt( charLeafs.length ) ];
+            }
+          }
+          return x;
+        }).join( "" );
+      }
+      let tannenbaum = generateTree( 18 );
+      q( "#display" ).innerText = tannenbaum;
+      setInterval( () => {
+        tannenbaum = mutateTree( tannenbaum );
+        q( "#display" ).innerText = tannenbaum;
+      }, 1000 );
+    </script>
+  </body>
+</html>

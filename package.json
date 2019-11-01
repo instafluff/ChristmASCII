@@ -1,0 +1,32 @@
+{
+  "name": "christmascii",
+  "version": "1.0.0",
+  "description": "ASCII Christmas Tree Display for Stream!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/instafluff/ChristmASCII.git"
+  },
+  "keywords": [
+    "Instafluff",
+    "Christmas",
+    "Tree",
+    "ASCII",
+    "display",
+    "stream",
+    "twitch",
+    "livestream"
+  ],
+  "author": "Instafluff",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/instafluff/ChristmASCII/issues"
+  },
+  "homepage": "https://github.com/instafluff/ChristmASCII#readme",
+  "dependencies": {
+    "webwebweb": "^1.1.5"
+  }
+}
